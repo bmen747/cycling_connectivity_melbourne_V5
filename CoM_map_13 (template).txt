@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bicycle Connectivity Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+    /* Container for title + legend + style switcher */
+    #map-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-family: "DIN Pro", "Arial", sans-serif;
+      color: black;
+      z-index: 1;
+      max-width: 300px;
+    }
+
+    /* Title */
+    #map-title {
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      font-weight: bold;
+    }
+
+    /* Legend title */
+    #legend-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0 6px 0;
+    }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+    .legend-color {
+      width: 20px;
+      height: 10px;
+      margin-right: 8px;
+      border: 1px solid #999;
+    }
+    .c1 { background: #d7191c; }
+    .c2 { background: #fdae61; }
+    .c3 { background: #ffffbf; }
+    .c4 { background: #a6d96a; }
+    .c5 { background: #1a9641; }
+    .c6 { background: #006837; }
+
+    /* Style switcher */
+    #style-switcher {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    #style-switcher label {
+      display: block;
+      margin-bottom: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- Overlay with title + legend + basemap switcher -->
+<div id="map-overlay">
+  <div id="map-title">Cycling Connectivity Melbourne</div>
+
+  <div id="legend-title">Average Link Percent Connectivity</div>
+  <div class="legend-item"><span class="legend-color c1"></span>85 – 100</div>
+  <div class="legend-item"><span class="legend-color c2"></span>70 – 85</div>
+  <div class="legend-item"><span class="legend-color c3"></span>55 – 70</div>
+  <div class="legend-item"><span class="legend-color c4"></span>40 – 55</div>
+  <div class="legend-item"><span class="legend-color c5"></span>25 – 40</div>
+  <div class="legend-item"><span class="legend-color c6"></span>0 – 25</div>
+
+  <div id="style-switcher">
+    <strong>Layer View:</strong><br>
+    <label><input type="radio" name="basemap" id="choropleth" checked> CoM SA1 Combined choropleth</label>
+    <label><input type="radio" name="basemap" id="betweeness"> CoM Betweeness centrality</label>
+    <label><input type="radio" name="basemap" id="linkscore"> CoM Percentage Link score</label>
+    <label><input type="radio" name="basemap" id="linkscore-alt"> CoM Percentage Link score [alternate]</label>
+  </div>
+</div>
+
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiYm1lbiIsImEiOiJjbWYxM2dmaHQwdG5oMmlvZTJwdnhhZDR5In0.iQ1T1bQ_Y7Er4Q38KxUGTQ';
+
+  const styles = {
+    choropleth: 'mapbox://styles/bmen/cmfb3otgq004001ss00ri10ue',
+    'linkscore-alt': 'mapbox://styles/bmen/cmfb2vrn5004901su3rwl75xl',
+    betweeness: 'mapbox://styles/bmen/cmfb0fktr003j01so76i4d90t',
+    linkscore: 'mapbox://styles/bmen/cmfayt1x6004601su08uc6b2h'
+  };
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: styles.choropleth, // default
+    center: [144.9631, -37.8136],
+    zoom: 12
+  });
+
+  // Compass + zoom buttons
+  const nav = new mapboxgl.NavigationControl({ visualizePitch: true });
+  map.addControl(nav, 'top-right');
+
+  // Scale bar
+  const scale = new mapboxgl.ScaleControl({ maxWidth: 200, unit: 'metric' });
+  map.addControl(scale, 'bottom-left');
+
+  // Attach listeners to radio buttons
+  for (const id in styles) {
+    document.getElementById(id).onclick = () => {
+      map.setStyle(styles[id]);
+    };
+  }
+</script>
+
+</body>
+</html>
